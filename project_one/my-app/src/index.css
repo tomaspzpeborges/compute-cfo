@@ -86,3 +86,13 @@ html, body {
   body { background: white; }
   .print\:hidden { display: none !important; }
 }
+
+/* SideNav + header tweaks */
+.sidenav { width: 260px; transition: width .2s ease; }
+.nav-item .i, .nav-pill .i { font-size: 14px }
+
+/* Cards slightly lighter like the screenshot */
+.card { background-color: color-mix(in oklab, var(--color-surface) 92%, #fff 0%); }
+
+/* Inputs look more console-like */
+input[type="date"], select { height: 34px }

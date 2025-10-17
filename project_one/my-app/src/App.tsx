@@ -325,15 +325,15 @@ function ReportShell({
   actionsRef: React.RefObject<HTMLDivElement | null>;
 }) {
   return (
-    <div className="card p-6 shadow-sm print:shadow-none">
-      <div className="flex items-start justify-between gap-4 mb-4">
+    <div className="card p-0 shadow-sm print:shadow-none overflow-hidden">
+      <div className="flex items-start justify-between gap-4 px-5 py-4 border-b border-border/70 bg-surface-2/70">
         <div>
-          <h2 className="text-xl font-semibold">{title}</h2>
-          <p className="text-sm text-muted">Generated {new Date().toLocaleString()}</p>
+          <h2 className="text-lg font-semibold">{title}</h2>
+          <p className="text-xs text-muted">Generated {new Date().toLocaleString()}</p>
         </div>
         <div ref={actionsRef} className="flex gap-2 print:hidden" />
       </div>
-      <div className="prose prose-zinc dark:prose-invert max-w-none">{children}</div>
+      <div className="p-5 prose prose-zinc dark:prose-invert max-w-none">{children}</div>
     </div>
   );
 }
@@ -456,6 +456,147 @@ function SpendByDeptProject({ rows }: { rows: UtilRow[] }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function SideNav({
+  activeTab,
+  onChangeTab,
+  currentKind,
+  onSelect,
+  notifications = 8,
+}: {
+  activeTab: "compute" | "simulate";
+  onChangeTab: (t: "compute" | "simulate") => void;
+  currentKind: ReportKind | null;
+  onSelect: (k: ReportKind | "insights") => void;
+  notifications?: number;
+}) {
+  const [collapsed, setCollapsed] = React.useState(false);
+
+  const items: Array<{
+    key: ReportKind | "insights";
+    label: string;
+    icon: React.ReactNode;
+  }> = [
+    { key: "spendByDeptProject", label: "Litigation Overview", icon: <span className="i">📊</span> },
+    { key: "topCustomers", label: "Jurisdiction Overview", icon: <span className="i">👥</span> },
+    { key: "reconcileAwsInternal", label: "Peril Overview", icon: <span className="i">🧾</span> },
+    { key: "customerGuardrails", label: "Industry Overview", icon: <span className="i">🛡️</span> },
+    { key: "insights", label: "AI System Overview", icon: <span className="i">✨</span> },
+  ];
+
+  const navWidth = collapsed ? 76 : 260;
+
+  return (
+    <aside
+      className="sidenav fixed inset-y-0 left-0 z-40 border-r border-border bg-surface-2"
+      style={{ width: navWidth }}
+    >
+      {/* Brand */}
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-border/80">
+        <div className="h-8 w-8 rounded-lg bg-[--color-blue]/20 grid place-items-center text-[--color-blue] font-bold">
+          N
+        </div>
+        {!collapsed && (
+          <div className="leading-tight">
+            <div className="font-semibold tracking-wide">NORA</div>
+            <div className="text-[11px] text-muted">V. 1.4</div>
+          </div>
+        )}
+        <button
+          className="ml-auto btn-ghost rounded-lg px-2 py-1"
+          title={collapsed ? "Expand" : "Collapse"}
+          onClick={() => setCollapsed((v) => !v)}
+        >
+          {collapsed ? "»" : "«"}
+        </button>
+      </div>
+
+      {/* Section title */}
+      {!collapsed && (
+        <div className="px-4 pt-4 pb-2 text-[11px] tracking-wide text-muted">COMPUTE FINANCIAL INTELLIGENCE</div>
+      )}
+
+      {/* Switch to dashboard / studio */}
+      <div className="px-2">
+        <button
+          onClick={() => onChangeTab("compute")}
+          className={[
+            "nav-pill",
+            activeTab === "compute" ? "nav-pill--active" : "",
+            collapsed ? "mx-2" : "",
+          ].join(" ")}
+          title="Dashboard"
+        >
+          <span className="i">🏠</span>
+          {!collapsed && <span>Explorer</span>}
+        </button>
+        <button
+          onClick={() => onChangeTab("simulate")}
+          className={[
+            "nav-pill",
+            activeTab === "simulate" ? "nav-pill--active" : "",
+            collapsed ? "mx-2" : "",
+          ].join(" ")}
+          title="Scenario Studio"
+        >
+          <span className="i">⚗️</span>
+          {!collapsed && <span> Market Scenario</span>}
+        </button>
+      </div>
+
+      {/* Bottom */}
+      <div className="absolute left-0 right-0 bottom-0 p-3">
+        {!collapsed && (
+          <div className="mb-3 flex items-center justify-between">
+            <div className="text-[12px] text-muted">NOTIFICATIONS</div>
+            <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[--color-blue] text-[10px] text-white px-1">
+              {notifications}
+            </span>
+          </div>
+        )}
+        <div className={["flex items-center gap-3 rounded-xl border border-border bg-surface p-2", collapsed ? "justify-center" : ""].join(" ")}>
+          <div className="h-8 w-8 rounded-full bg-[--color-blue]/20 grid place-items-center font-semibold text-[--color-blue]">TZB</div>
+          {!collapsed && (
+            <div className="leading-tight">
+              <div className="text-sm">Account</div>
+              <div className="text-xs text-muted">Settings</div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* local styles */}
+      <style>{`
+        .nav-pill {
+          width: 100%;
+          display: flex; align-items: center; gap: .6rem;
+          margin-bottom: .35rem;
+          padding: .6rem .75rem;
+          border-radius: 12px;
+          border: 1px solid var(--color-border);
+          background: var(--color-surface);
+          color: var(--color-text);
+        }
+        .nav-pill--active {
+          border-color: color-mix(in oklab, var(--color-blue) 60%, var(--color-border));
+          box-shadow: 0 0 0 1px var(--color-blue) inset;
+        }
+        .nav-item {
+          width: 100%;
+          display: flex; align-items: center; gap: .7rem;
+          padding: .6rem .75rem;
+          border-radius: 12px;
+          color: var(--color-text);
+          background: transparent;
+        }
+        .nav-item:hover { background: color-mix(in oklab, var(--color-surface) 70%, #fff 0%); }
+        .nav-item--active { background: color-mix(in oklab, var(--color-surface) 80%, #fff 0%); }
+        .i { width: 20px; text-align: center; opacity: .9 }
+        .chev { opacity: .35 }
+      `}</style>
+    </aside>
   );
 }
 
@@ -2173,70 +2314,40 @@ function TopBar({
   active: "compute" | "simulate";
   onChange: (tab: "compute" | "simulate") => void;
 }) {
-  const tabClass = (tab: "compute" | "simulate") =>
-    [
-      "relative px-3 sm:px-4 py-1.5 rounded-lg text-sm font-medium transition-all",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/40",
-      active === tab
-        ? [
-            "text-white",
-            "ring-1 ring-white/10",
-            "bg-[linear-gradient(180deg,#1a2230_0%,#141b24_100%)]",
-            "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_12px_30px_-16px_rgba(47,111,235,0.45)]",
-          ].join(" ")
-        : "text-muted hover:text-text hover:bg-white/5",
-    ].join(" ");
-
   return (
-    <div className="sticky top-0 z-30 mb-8">
-      <div className="relative overflow-hidden rounded-2xl border border-[--color-blue]/35 backdrop-blur-xl">
-        {/* Steel header stripe */}
-        <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-[--color-blue] to-transparent opacity-70" />
-        {/* Bar content */}
-        <div className="relative px-4 sm:px-5 py-3 sm:py-4 bg-[linear-gradient(180deg,#0f141a_0%,#0e1217_100%)]">
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <div className="font-semibold leading-tight truncate">Nora</div>
-              <div className="text-[11px] text-muted -mt-0.5">Compute Finance Intelligence</div>
-            </div>
+    <div className="sticky top-0 z-30 mb-6 bg-background/70 backdrop-blur">
+      <div className="h-[56px] border-b border-border flex items-center gap-4 px-4">
+        {/* Center menu like the screenshot */}
+        <nav className="ml-4 hidden md:flex items-center gap-6 text-sm">
+          <button
+            onClick={() => onChange("compute")}
+            className={["toplink", active === "compute" ? "toplink--active" : ""].join(" ")}
+          >
+            Explorer
+          </button>
+          <button
+            onClick={() => onChange("simulate")}
+            className={["toplink", active === "simulate" ? "toplink--active" : ""].join(" ")}
+          >
+            Market Scenario
+          </button>
+        </nav>
 
-            {/* Segmented control */}
-            <div
-              role="tablist"
-              aria-label="Primary views"
-              className="relative inline-flex items-center gap-1 rounded-xl p-1 border border-[--color-blue]/35 bg-white/5 dark:bg-black/10"
-            >
-              <button
-                role="tab"
-                aria-selected={active === "compute"}
-                className={tabClass("compute")}
-                onClick={() => onChange("compute")}
-                title="Compute Spend"
-              >
-                <span className="hidden sm:inline">Compute Spend</span>
-                <span className="sm:hidden">Spend</span>
-                {active === "compute" && (
-                  <span aria-hidden className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-[--color-blue] ring-2 ring-[--color-surface]" />
-                )}
-              </button>
-
-              <button
-                role="tab"
-                aria-selected={active === "simulate"}
-                className={tabClass("simulate")}
-                onClick={() => onChange("simulate")}
-                title="Compute Market Simulation"
-              >
-                <span className="hidden sm:inline">Compute Market Simulation</span>
-                <span className="sm:hidden">Simulation</span>
-                {active === "simulate" && (
-                  <span aria-hidden className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-[--color-blue] ring-2 ring-[--color-surface]" />
-                )}
-              </button>
-            </div>
-          </div>
+        {/* Right side */}
+        <div className="ml-auto flex items-center gap-3">
+          <span className="rounded-full bg-[--color-blue]/15 text-[--color-blue] text-[11px] px-2 py-1">V 1.4</span>
+          <div className="h-8 w-8 rounded-full bg-[--color-blue]/20 grid place-items-center font-semibold text-[--color-blue]">TZB</div>
         </div>
       </div>
+
+      <style>{`
+        .toplink { position: relative; padding: 6px 2px; color: var(--color-muted); }
+        .toplink--active { color: var(--color-text); }
+        .toplink--active::after {
+          content: ""; position: absolute; left: 0; right: 0; bottom: -11px;
+          height: 2px; background: var(--color-blue);
+        }
+      `}</style>
     </div>
   );
 }
@@ -2434,7 +2545,7 @@ function ChatBar({
             className={[
               "inline-flex items-center gap-2 rounded-xl px-4 py-2",
               "bg-[--color-blue] text-white font-medium",
-              "shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30",
+              "shadow-lg shadow-rose-500/20 hover:shadow-rose-500/30",
               "focus-visible:ring-2 focus-visible:ring-blue-400/40",
               isLoading ? "opacity-80 cursor-not-allowed" : ""
             ].join(" ")}
@@ -2443,7 +2554,6 @@ function ChatBar({
             {isLoading ? (
               <>
                 <span className="h-4 w-4 inline-block rounded-full border-2 border-white/70 border-t-transparent animate-spin" />
-                Working…
               </>
             ) : (
               <>✨ Find Compute Insights</>
@@ -2591,96 +2701,62 @@ function TimespanFilter({
   onChange: (v: Timespan) => void;
   className?: string;
 }) {
-  const showing =
-    value.mode === "last"
-      ? { start: addDays(bounds.max, -(value.days - 1)) < bounds.min ? bounds.min : addDays(bounds.max, -(value.days - 1)), end: bounds.max }
-      : { start: value.start, end: value.end };
-
   const daysOptions = [7, 14, 30, 60, 90];
 
   return (
-    <div className={["card p-4 mb-4", className].join(" ")}>
-      <div className="flex flex-col md:flex-row md:items-end gap-3">
-        {/* Mode: Last N days */}
-        <div className="flex-1">
-          <label className="text-xs text-muted block mb-1">Quick range</label>
-          <div className="flex items-center gap-2">
-            <select
-              value={value.mode === "last" ? value.days : ""}
-              onChange={(e) => {
-                const v = parseInt(e.target.value || "30", 10);
-                onChange({ mode: "last", days: isNaN(v) ? 30 : v });
-              }}
-              className="rounded-xl border border-border bg-surface px-3 py-2 w-36"
-              aria-label="Last N days"
-            >
-              {daysOptions.map((d) => (
-                <option key={d} value={d}>
-                  Last {d} days
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={() => onChange({ mode: "last", days: 30 })}
-              className="btn"
-              title="Reset to last 30 days"
-            >
-              Reset
-            </button>
-          </div>
-          <p className="text-xs text-muted mt-1">
-            Data available: <strong>{bounds.min}</strong> → <strong>{bounds.max}</strong>
-          </p>
+    <div className={["card p-3", className].join(" ")}>
+      <div className="flex flex-col md:flex-row md:items-center gap-3">
+        <div className="flex items-center gap-2">
+          <label className="text-xs text-muted">Quick</label>
+          <select
+            value={value.mode === "last" ? value.days : 30}
+            onChange={(e) =>
+              onChange({ mode: "last", days: parseInt(e.target.value || "30", 10) })
+            }
+            className="rounded-lg border border-border bg-surface px-2 py-1 text-sm"
+          >
+            {daysOptions.map((d) => (
+              <option key={d} value={d}>
+                Last {d} days
+              </option>
+            ))}
+          </select>
+          <button onClick={() => onChange({ mode: "last", days: 30 })} className="btn px-3 py-1 text-sm">
+            Reset
+          </button>
         </div>
 
-        {/* Mode: Custom range */}
-        <div className="flex-1">
-          <label className="text-xs text-muted block mb-1">Custom range</label>
-          <div className="flex items-center gap-2">
-            <input
-              type="date"
-              min={bounds.min}
-              max={bounds.max}
-              value={value.mode === "range" ? value.start : addDays(bounds.max, -29)}
-              onChange={(e) => {
-                const start = clampIso(e.target.value, bounds.min, bounds.max);
-                const end =
-                  value.mode === "range"
-                    ? clampIso(value.end, start, bounds.max)
-                    : clampIso(bounds.max, start, bounds.max);
-                onChange({ mode: "range", start, end });
-              }}
-              className="rounded-xl border border-border bg-surface px-3 py-2"
-              aria-label="Start date"
-            />
-            <span className="text-sm text-muted">to</span>
-            <input
-              type="date"
-              min={bounds.min}
-              max={bounds.max}
-              value={value.mode === "range" ? value.end : bounds.max}
-              onChange={(e) => {
-                const end = clampIso(e.target.value, bounds.min, bounds.max);
-                const start =
-                  value.mode === "range"
-                    ? clampIso(value.start, bounds.min, end)
-                    : clampIso(addDays(end, -29), bounds.min, end);
-                onChange({ mode: "range", start, end });
-              }}
-              className="rounded-xl border border-border bg-surface px-3 py-2"
-              aria-label="End date"
-            />
-          </div>
+        <div className="flex items-center gap-2">
+          <label className="text-xs text-muted">From</label>
+          <input
+            type="date"
+            min={bounds.min}
+            max={bounds.max}
+            value={value.mode === "range" ? value.start : bounds.min}
+            onChange={(e) => {
+              const start = e.target.value;
+              const end = value.mode === "range" ? value.end : bounds.max;
+              onChange({ mode: "range", start, end: end < start ? start : end });
+            }}
+            className="rounded-lg border border-border bg-surface px-2 py-1 text-sm"
+          />
+          <label className="text-xs text-muted">to</label>
+          <input
+            type="date"
+            min={bounds.min}
+            max={bounds.max}
+            value={value.mode === "range" ? value.end : bounds.max}
+            onChange={(e) => {
+              const end = e.target.value;
+              const start = value.mode === "range" ? value.start : bounds.min;
+              onChange({ mode: "range", start: start > end ? end : start, end });
+            }}
+            className="rounded-lg border border-border bg-surface px-2 py-1 text-sm"
+          />
         </div>
 
-        {/* Display */}
-        <div className="md:w-64">
-          <div className="text-xs text-muted mb-1">Showing</div>
-          <div className="rounded-xl border border-border bg-surface px-3 py-2">
-            <div className="text-sm">
-              {showing.start} → {showing.end}
-            </div>
-          </div>
+        <div className="ml-auto text-xs text-muted">
+          Data: <strong>{bounds.min}</strong> → <strong>{bounds.max}</strong>
         </div>
       </div>
     </div>
@@ -2774,13 +2850,13 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<ReportKind | null>(null);
 
-  // Generate a wider history so the timespan filter can slice freely
+  // data + bounds
   const [seed, setSeed] = useState<number>(1337);
-  const [allDays] = useState(180); // was fixed 30; now we keep 6 months of mock data
+  const [allDays] = useState(180);
   const allRows = useMemo(() => makeMockRows(allDays, seed), [allDays, seed]);
   const bounds = useMemo(() => getBounds(allRows), [allRows]);
 
-  // Timespan state (default: last 30 days)
+  // timespan
   const [timespan, setTimespan] = useState<Timespan>({ mode: "last", days: 30 });
   const viewRows = useMemo(() => filterRowsByTimespan(allRows, timespan, bounds), [allRows, timespan, bounds]);
 
@@ -2816,20 +2892,18 @@ export default function App() {
     setKind(k);
     setShowInsights(false);
   }
-
   function revealInsightsOnly() {
     setShowInsights(true);
     setKind(null);
   }
 
-  // Derive a period label that matches the visible slice
   const periodLabel = useMemo(
     () => periodLabelFromTimespan(timespan, bounds, seed),
     [timespan, bounds, seed]
   );
 
   function exportCurrent(format: "csv" | "json") {
-    const rows = viewRows; // use filtered slice everywhere below
+    const rows = viewRows;
     let data: any[] = [];
     if (kind === "spendByDeptProject") {
       const byKey: Record<string, any> = {};
@@ -2877,7 +2951,6 @@ export default function App() {
       }));
     } else if (kind === "reconcileAwsInternal") {
       const recon = computeAwsBudgetReconciliation(rows);
-      // Export the daily reconciliation view
       data = recon.byDay.map((d) => ({
         date: d.date,
         budget: d.budget,
@@ -2929,17 +3002,33 @@ export default function App() {
     if (activeTab !== "compute") setShowInsights(false);
   }, [activeTab]);
 
+  // Layout with sidebar
+  const contentMargin = 260; // matches SideNav expanded width
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/60 text-text">
-      <div className="mx-auto max-w-6xl px-4 py-6">
+      <SideNav
+        activeTab={activeTab}
+        onChangeTab={setActiveTab}
+        currentKind={kind}
+        onSelect={(k) => {
+          if (k === "insights") {
+            setShowInsights(true);
+            setKind(null);
+            setActiveTab("compute");
+          } else {
+            setKind(k);
+            setShowInsights(false);
+            setActiveTab("compute");
+          }
+        }}
+      />
+
+      <div className="mx-auto max-w-7xl px-6 py-6" style={{ marginLeft: contentMargin }}>
         <TopBar active={activeTab} onChange={setActiveTab} />
 
         {activeTab === "compute" && (
           <>
-            <header className="mb-6">
-              <h1 className="sr-only">Compute Finance Demo</h1>
-            </header>
-
             <ChatBar
               query={query}
               setQuery={setQuery}
@@ -2950,14 +3039,8 @@ export default function App() {
               setSeed={setSeed}
             />
 
-            {/* Show timespan control only after the user runs a prompt or reveals insights */}
             {(kind || showInsights) && (
-              <TimespanFilter
-                bounds={bounds}
-                value={timespan}
-                onChange={setTimespan}
-                className="print:hidden"
-              />
+              <TimespanFilter bounds={bounds} value={timespan} onChange={setTimespan} className="print:hidden" />
             )}
 
             {showInsights && (
@@ -2968,31 +3051,21 @@ export default function App() {
 
             {kind && (
               <div className="flex flex-wrap gap-2 mb-4 print:hidden items-center">
-                <button onClick={() => exportCurrent("csv")} className="btn">
-                  Export CSV
-                </button>
-                <button onClick={() => exportCurrent("json")} className="btn">
-                  Export JSON
-                </button>
-                <button onClick={printReport} className="btn">
-                  Print / Save PDF
-                </button>
+                <button onClick={() => exportCurrent("csv")} className="btn">Export CSV</button>
+                <button onClick={() => exportCurrent("json")} className="btn">Export JSON</button>
+                <button onClick={printReport} className="btn">Print / Save PDF</button>
 
                 <span className="mx-2 text-muted">|</span>
 
                 <button
-                  onClick={() => {
-                    exportNetSuiteJournal(viewRows, periodLabel);
-                  }}
+                  onClick={() => exportNetSuiteJournal(viewRows, periodLabel)}
                   className="btn"
                   title="CSV for NetSuite Journal Entry import"
                 >
                   NetSuite: Journal Entry CSV
                 </button>
                 <button
-                  onClick={() => {
-                    exportNetSuiteVendorBills(viewRows, periodLabel);
-                  }}
+                  onClick={() => exportNetSuiteVendorBills(viewRows, periodLabel)}
                   className="btn"
                   title="CSV for NetSuite Vendor Bill import"
                 >
@@ -3003,28 +3076,28 @@ export default function App() {
 
             {!kind && !showInsights && (
               <div className="card border-dashed p-8 text-muted">
-                Pick a suggested prompt, then press <strong className="text-text">Go</strong>. Or press{" "}
-                <strong className="text-text">Find Compute Insights</strong> to reveal optimization and margin sections.
+                Pick a menu item on the left or use a suggested prompt, then press <strong className="text-text">Ask</strong>.  
+                Or press <strong className="text-text">Find Compute Insights</strong>.
               </div>
             )}
 
             {kind === "spendByDeptProject" && (
-              <ReportShell title="Compute Spend by Department & Project" actionsRef={actionsRef}>
+              <ReportShell title="Litigation Overview" actionsRef={actionsRef}>
                 <SpendByDeptProject rows={viewRows} />
               </ReportShell>
             )}
             {kind === "topCustomers" && (
-              <ReportShell title="Top Customers by Compute Consumption" actionsRef={actionsRef}>
+              <ReportShell title="Jurisdiction Overview" actionsRef={actionsRef}>
                 <TopCustomers rows={viewRows} />
               </ReportShell>
             )}
             {kind === "reconcileAwsInternal" && (
-              <ReportShell title="AWS Billing vs Internal Ledger — Reconciliation" actionsRef={actionsRef}>
+              <ReportShell title="Peril Overview — AWS Billing vs Internal" actionsRef={actionsRef}>
                 <ReconcileAwsInternal rows={viewRows} />
               </ReportShell>
             )}
             {kind === "customerGuardrails" && (
-              <ReportShell title="Customer Margin Guardrails — Pricing Leverage" actionsRef={actionsRef}>
+              <ReportShell title="Industry Overview — Customer Margin Guardrails" actionsRef={actionsRef}>
                 <CustomerMarginGuardrailsPanel rows={viewRows} />
               </ReportShell>
             )}
