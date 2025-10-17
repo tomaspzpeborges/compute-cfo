@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+/* ---- Palantir-style Dark / Blue / Red theme ---- */
+@theme {
+  --font-sans: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Steel surfaces */
+  --color-background: #0e1114;
+  --color-surface:    #11161b;
+  --color-surface-2:  #131a22;
+  --color-border:     #1b2533;
+  --color-text:       #e8eaec;
+  --color-muted:      #9aa7b4;
+
+  /* Accents */
+  --color-blue:   #2f6feb;   /* cobalt */
+  --color-rose:   #e11d48;   /* alert red */
+  --color-slate:  #64748b;   /* steel grey */
+
+  /* NEW distinct hues for stacks */
+  --color-amber:   #f59e0b;  /* amber/gold */
+  --color-emerald: #10b981;  /* emerald/green */
+  --color-violet:  #8b5cf6;  /* optional: nice for CoreWeave */
+
+  /* Chart extras */
+  --color-grid: #ffffff14;
+  --color-axis: #9aa7b4;
+
+  /* Chart aliases — ensure uniqueness */
+  --chart-blue:    var(--color-blue);
+  --chart-rose:    var(--color-rose);
+  --chart-amber:   var(--color-amber);
+  --chart-emerald: var(--color-emerald);
+  --chart-slate:   var(--color-slate);
+
+  /* Optional vendor-specific tokens (use in your fills if you like) */
+  --chart-aws:       var(--color-blue);
+  --chart-coreweave: var(--color-violet);  /* or var(--color-rose) */
+  --chart-onprem:    var(--color-amber);
+  --chart-openai:    var(--color-emerald);
+}
+
+:root { color-scheme: dark; }
+
+html, body {
+  @apply bg-background text-text antialiased;
+  font-family: var(--font-sans);
+}
+
+/* Numeric aesthetics */
+.num, .kpi, table, .recharts-wrapper {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+/* Selection + focus */
+::selection { background: color-mix(in oklab, var(--color-blue) 70%, transparent); color: white; }
+:focus-visible { outline: none; box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-blue) 60%, transparent); }
+
+/* Subtle scrollbars */
+*::-webkit-scrollbar { height: 10px; width: 10px; }
+*::-webkit-scrollbar-thumb { background: #1a2432; border-radius: 8px; }
+
+/* Palantir-y cards + buttons (sleek, minimal) */
+.card {
+  @apply rounded-2xl border border-border bg-surface shadow-[0_0_0_1px_var(--color-border)] backdrop-blur;
+}
+.btn {
+  @apply rounded-xl px-4 py-2 border border-border text-text transition bg-surface hover:bg-surface-2;
+}
+.btn-primary {
+  @apply bg-[--color-blue] text-white border-[--color-blue] hover:opacity-90;
+}
+.btn-ghost { @apply bg-transparent hover:bg-surface-2; }
+
+/* Convenience surface classes */
+.bg-surface   { background-color: var(--color-surface); }
+.bg-surface-2 { background-color: var(--color-surface-2); }
+
+/* Text helpers */
+.text-muted { color: var(--color-muted); }
+
+/* Print */
+@media print { 
+  body { background: white; }
+  .print\:hidden { display: none !important; }
+}
