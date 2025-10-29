@@ -8,6 +8,6 @@
 
 **Key Differentiators:**
 
-    1. Full automation of compute provisioning and scaling (“hands-free”).
-    2. Market-driven efficiency: cost and allocation dynamically optimised.
-    3. Converts compute from an opaque operational cost into a **financially fungible asset**.
+    - Full automation of compute provisioning and scaling (“hands-free”).
+    - Market-driven efficiency: cost and allocation dynamically optimised.
+    - Converts compute from an opaque operational cost into a **financially fungible asset**.
