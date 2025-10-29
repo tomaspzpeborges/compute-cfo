@@ -1,4 +1,4 @@
-**Vision:** Users and companies access compute as effortlessly as they use electricity — no manual provisioning, no monitoring, no juggling multiple clouds or clusters.
+**Vision:** Compute-heavy companies and respective users access compute as effortlessly as they use electricity — no manual provisioning, no monitoring, no juggling multiple clouds or clusters.
 
 **Core Mechanism:**
 
